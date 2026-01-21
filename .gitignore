@@ -32,7 +32,8 @@ dependency-reduced-pom.xml
 
 ### Environment files ###
 .env
-.env.*
+.env.local
+.env.docker
 !.env.example
 
 ### Lombok ###

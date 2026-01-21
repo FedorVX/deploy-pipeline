@@ -1,8 +1,40 @@
+networks:
+  my-network:
+    driver: bridge
+
+volumes:
+  pg_data:
+
 services:
   postgres-db:
     image: postgres:15-alpine
     container_name: postgres-db
     env_file:
       - .env
+
     ports:
       - "5435:5432"
+    networks:
+      - my-network
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    image: ddosl/crud-app:latest
+    container_name: crud-app
+    env_file:
+      - .env.docker
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8080:8080"
+    networks:
+      - my-network
+    depends_on:
+      postgres-db:
+        condition: service_healthy
