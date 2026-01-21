@@ -1,0 +1,52 @@
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+
+### OS ###
+.DS_Store
+Thumbs.db
+
+### Logs ###
+*.log
+logs/
+
+### Build ###
+/target/
+/out/
+build/
+
+### Maven ###
+dependency-reduced-pom.xml
+
+### Gradle ###
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+
+### Spring Boot ###
+*.jar
+*.war
+*.ear
+!.mvn/wrapper/maven-wrapper.jar
+
+### Environment files ###
+.env
+.env.*
+!.env.example
+
+### Lombok ###
+lombok.config
+
+### Test reports ###
+/surefire-reports/
+/failsafe-reports/
+
+### Temporary files ###
+*.tmp
+*.bak
+*.swp
+*~
+
+### IDE other ###
+.vscode/
