@@ -13,7 +13,7 @@ services:
       - .env
 
     ports:
-      - "5435:5432"
+      - "5432:5432"
     networks:
       - my-network
     volumes:
@@ -28,7 +28,7 @@ services:
     image: ddosl/crud-app:latest
     container_name: crud-app
     env_file:
-      - .env.docker
+      - .env
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     ports:
