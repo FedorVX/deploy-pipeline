@@ -42,9 +42,34 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
+            # Логинимся в Docker Hub
             echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
-            cd /root/deploy-pipeline
-            docker-compose down
-            docker rmi ddosl/crud-app:latest
+            
+            # Инициализация Swarm, если ещё не инициализирован
+            if ! docker info | grep -q "Swarm: active"; then
+                docker swarm init
+            fi
+            
+            # Создание overlay сети, если не существует
+            if ! docker network ls | grep -q "my-network"; then
+                docker network create --driver overlay my-network
+            fi
+            
+            # Создание/обновление конфигурации Nginx
+            if ! docker config ls | grep -q "nginx-conf"; then
+                docker config create nginx-conf ./nginx.conf
+            else
+                docker config rm nginx-conf
+                docker config create nginx-conf ./nginx.conf
+            fi
+            
+            # Удаляем старый локальный образ
+            if docker images | grep -q "${{ secrets.DOCKER_HUB_USERNAME }}/crud-app"; then
+                docker rmi -f ${{ secrets.DOCKER_HUB_USERNAME }}/crud-app:latest || true
+            fi
+            
+            # Скачиваем свежий образ
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/crud-app:latest
-            docker compose up -d
+            
+            # Обновляем стек
+            docker stack deploy -c docker-compose.yaml crud-stack
