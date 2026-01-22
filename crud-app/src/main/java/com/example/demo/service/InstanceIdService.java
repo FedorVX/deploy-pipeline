@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.net.InetAddress;
@@ -9,6 +11,7 @@ import java.util.UUID;
 @Service
 public class InstanceIdService {
 
+    private static final Logger log = LoggerFactory.getLogger(InstanceIdService.class);
     private final String instanceId;
 
     public InstanceIdService() {
@@ -21,10 +24,13 @@ public class InstanceIdService {
 
     private static String generateInstanceId() {
         try {
-            return InetAddress.getLocalHost().getHostName();
+            String hostname = InetAddress.getLocalHost().getHostName();
+            log.info("Successfully determined hostname for instance ID: {}", hostname);
+            return hostname;
         } catch (UnknownHostException e) {
-            // Fallback in case hostname is not available
-            return "unknown-" + UUID.randomUUID();
+            String fallbackId = "unknown-" + UUID.randomUUID();
+            log.warn("Could not determine hostname. Falling back to generated ID: {}. Error: {}", fallbackId, e.getMessage());
+            return fallbackId;
         }
     }
 }
