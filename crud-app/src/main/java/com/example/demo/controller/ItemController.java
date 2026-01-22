@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/items")
@@ -23,16 +22,15 @@ public class ItemController {
 
     @GetMapping
     public List<Item> getAllItems() {
-        return itemService.getAllItems().stream()
-                .peek(this::enrichItem)
-                .collect(Collectors.toList());
+        List<Item> items = itemService.getAllItems();
+        items.forEach(this::enrichItem);
+        return items;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Item> getItemById(@PathVariable Long id) {
         return itemService.getItemById(id)
-                .map(this::enrichItem)
-                .map(ResponseEntity::ok)
+                .map(item -> ResponseEntity.ok(enrichItem(item)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -45,8 +43,7 @@ public class ItemController {
     @PutMapping("/{id}")
     public ResponseEntity<Item> updateItem(@PathVariable Long id, @RequestBody Item itemDetails) {
         return itemService.updateItem(id, itemDetails)
-                .map(this::enrichItem)
-                .map(ResponseEntity::ok)
+                .map(item -> ResponseEntity.ok(enrichItem(item)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
