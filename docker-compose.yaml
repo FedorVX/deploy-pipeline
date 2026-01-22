@@ -25,7 +25,7 @@ services:
       retries: 5
 
   app:
-    image: ddosl/crud-app:1.1.0
+    image: ddosl/crud-app:latest
     container_name: crud-app
     env_file:
       - .env
