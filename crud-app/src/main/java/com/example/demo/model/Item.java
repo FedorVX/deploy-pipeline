@@ -6,6 +6,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import jakarta.persistence.Transient;
+
 @Entity
 @Table(name = "items")
 public class Item {
@@ -15,6 +17,9 @@ public class Item {
     private Long id;
 
     private String name;
+
+    @Transient
+    private String instanceId;
 
     // Constructors
     public Item() {
@@ -39,5 +44,13 @@ public class Item {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getInstanceId() {
+        return instanceId;
+    }
+
+    public void setInstanceId(String instanceId) {
+        this.instanceId = instanceId;
     }
 }
