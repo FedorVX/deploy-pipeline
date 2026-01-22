@@ -63,6 +63,8 @@ jobs:
             # Логинимся в Docker Hub
             echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
             
+            cd /root/deploy-pipeline
+            
             # Инициализация Swarm, если ещё не инициализирован
             if ! docker info | grep -q "Swarm: active"; then
                 docker swarm init
