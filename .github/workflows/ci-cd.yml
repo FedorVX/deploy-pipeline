@@ -26,7 +26,7 @@ jobs:
 
       # 4️⃣ Пушим образ в Docker Hub
       - name: Push Docker image
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/crud-app:latest
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/crud-app:${{ github.sha }}
 
       # 5️⃣ Подключаемся к серверу и обновляем контейнер
       - name: Deploy to server
@@ -38,5 +38,5 @@ jobs:
           script: |
             echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
             cd /root/deploy-pipeline
-            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/crud-app:latest
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/crud-app:${{ github.sha }}
             docker compose up -d
