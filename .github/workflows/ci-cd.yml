@@ -47,4 +47,4 @@ jobs:
             docker-compose down
             docker rmi ddosl/crud-app:latest
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/crud-app:latest
-            docker compose up -d
+            docker stack deploy -c docker-compose.yaml crud-stack
