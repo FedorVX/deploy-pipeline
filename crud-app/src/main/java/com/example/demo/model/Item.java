@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,11 +25,7 @@ public class Item {
     // Constructors
     public Item() {
     }
-
-    public Item(String name) {
-        this.name = name;
-    }
-
+    
     // Getters and Setters
     public Long getId() {
         return id;
@@ -46,6 +43,7 @@ public class Item {
         this.name = name;
     }
 
+    @JsonProperty("instanceId")
     public String getInstanceId() {
         return instanceId;
     }
