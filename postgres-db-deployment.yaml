@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: postgres-db
+  name: postgres-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: postgres-db
+    spec:
+      containers:
+        - env:
+            - name: POSTGRES_PASSWORD_FILE
+              value: /run/secrets/postgres-password
+            - name: POSTGRES_USER_FILE
+              value: /run/secrets/postgres-user
+          envFrom:
+            - configMapRef:
+                name: env
+          image: postgres:15-alpine
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -d
+                - postgres
+                - -U
+                - deploy_user
+            failureThreshold: 5
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            timeoutSeconds: 5
+          name: postgres-db
+          volumeMounts:
+            - mountPath: /run/secrets/postgres-user
+              name: postgres-user-secret
+              subPath: postgres-user
+            - mountPath: /run/secrets/postgres-password
+              name: postgres-password-secret
+              subPath: postgres-password
+            - mountPath: /var/lib/postgresql/data
+              name: pg-data
+      volumes:
+        - name: postgres-user-secret
+          secret:
+            secretName: postgres-user
+        - name: postgres-password-secret
+          secret:
+            secretName: postgres-password
+        - name: pg-data
+          persistentVolumeClaim:
+            claimName: pg-data

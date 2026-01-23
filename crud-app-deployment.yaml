@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crud-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: crud-app
+  template:
+    metadata:
+      labels:
+        app: crud-app
+    spec:
+      initContainers:
+      - name: wait-for-postgres
+        image: busybox:1.28
+        command: ['sh', '-c', 'until nslookup postgres-db; do echo waiting for postgres; sleep 2; done']
+      containers:
+        - name: crud-app
+          image: ddosl/crud-app:latest
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: docker
+            - name: SPRING_CONFIG_IMPORT
+              value: configtree:/run/secrets/
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-user
+                  key: postgres-user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-password
+                  key: postgres-password
+          envFrom:
+            - configMapRef:
+                name: env
+          livenessProbe:
+            exec:
+              command:
+                - wget
+                - --no-verbose
+                - --tries=1
+                - --spider
+                - http://localhost:8080/actuator/health
+            failureThreshold: 5
+            periodSeconds: 15
+            timeoutSeconds: 5
+

@@ -27,7 +27,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-      start_period: 20s # Даем базе 10 секунд просто на запуск перед первой проверкой
+      start_period: 20s
 
   crud-app:
     image: ddosl/crud-app:latest
@@ -36,8 +36,6 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_CONFIG_IMPORT: configtree:/run/secrets/
-#      POSTGRES_USER_FILE: /run/secrets/postgres_user
-#      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
     secrets:
       - postgres_user
       - postgres_password

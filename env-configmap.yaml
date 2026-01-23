@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  GOOGLE_CLOUD_PROJECT_ID: gen-lang-client-0408324338
+  POSTGRES_DB: crud-db
+  POSTGRES_HOST: postgres-db
+  POSTGRES_PORT: "5432"
+kind: ConfigMap
+metadata:
+
+  name: env
